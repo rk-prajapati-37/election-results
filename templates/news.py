@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 
-# Google Sheets CSV ka URL
+# Google Sheets CSV URL
 url = 'https://docs.google.com/spreadsheets/d/18Z0HOYlHqjOAHOV55JaUiHiidDvNPqkbMlqDuFBEGWQ/export?format=csv&gid=1785908724'
 
 # Manually specifying column names
@@ -13,16 +13,12 @@ columns = [
     "Claim Source"
 ]
 
-# CSV file load karna, pehli 3 rows skip karna, aur column names specify karna
+# Load CSV file, skip first 3 rows, and specify column names
 news_df = pd.read_csv(url, skiprows=3, names=columns, header=None)
 
-# Check karna ki 'City' column exist karta hai ya nahi
-if 'City' not in news_df.columns:
-    st.error("'City' column dataset mein maujood nahi hai.")
-    st.write("Available columns:", news_df.columns.tolist())
-    st.stop()
+# Function to filter news by city
 
-# News ko city ke naam se filter karne ka function
+
 def filter_news_by_city(news, city_name):
     filtered_news = news[news['City'].str.lower() == city_name.lower()]
     if filtered_news.empty:
@@ -40,7 +36,8 @@ def filter_news_by_city(news, city_name):
             st.write(f"**Tags:** {row['Tags']}")
             st.write(f"**GA Views:** {row['GA Views']}")
             st.write(f"**Image:** ![Image]({row['Image']})")
-            st.write(f"**Display Story As Fast Check:** {row['Display Story As Fast Check']}")
+            st.write(
+                f"**Display Story As Fast Check:** {row['Display Story As Fast Check']}")
             st.write(f"**Select Review:** {row['Select Review']}")
             st.write(f"**Text Caption:** {row['Text Caption']}")
             st.write(f"**Caption:** {row['Caption']}")
@@ -52,16 +49,15 @@ def filter_news_by_city(news, city_name):
             st.write(f"**City:** {row['City']}")
             st.write('-' * 50)
 
-# Streamlit app mein news_page function ko call karna
+# Function to render the news page in Streamlit app
+
+
 def news_page():
     st.title("News by City")
 
-    # User se city name input lena
+    # User input for city name
     city_name = st.text_input("City ka naam daalein:")
 
-    # Agar city di gayi hai, toh news ko filter aur display karna
+    # If a city is provided, filter and display news
     if city_name:
         filter_news_by_city(news_df, city_name)
-
-# Function ko Streamlit app mein call karna
-news_page()
