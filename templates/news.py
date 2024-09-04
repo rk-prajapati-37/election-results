@@ -1,41 +1,67 @@
 import pandas as pd
+import streamlit as st
 
-# URL of the Google Sheets CSV
-url = 'https://docs.google.com/spreadsheets/d/18Z0HOYlHqjOAHOV55JaUiHiidDvNPqkbMlqDuFBEGWQ/export?format=csv&id=18Z0HOYlHqjOAHOV55JaUiHiidDvNPqkbMlqDuFBEGWQ'
+# Google Sheets CSV ka URL
+url = 'https://docs.google.com/spreadsheets/d/18Z0HOYlHqjOAHOV55JaUiHiidDvNPqkbMlqDuFBEGWQ/export?format=csv&gid=1785908724'
 
-# Load the CSV data into a pandas DataFrame
-news_df = pd.read_csv(url)
+# Manually specifying column names
+columns = [
+    "Sr No", "News Id", "City", "Heading", "Date Of Publish", "URL",
+    "Author", "Editor", "Reviewer", "Category", "Tags", "GA Views",
+    "Image", "Display Story As Fast Check", "Select Review", "Text Caption",
+    "Caption", "language", "Article Type", "Claim Review", "Claimed By",
+    "Claim Source"
+]
 
-# Function to filter news by city
+# CSV file load karna, pehli 3 rows skip karna, aur column names specify karna
+news_df = pd.read_csv(url, skiprows=3, names=columns, header=None)
+
+# Check karna ki 'City' column exist karta hai ya nahi
+if 'City' not in news_df.columns:
+    st.error("'City' column dataset mein maujood nahi hai.")
+    st.write("Available columns:", news_df.columns.tolist())
+    st.stop()
+
+# News ko city ke naam se filter karne ka function
 def filter_news_by_city(news, city_name):
     filtered_news = news[news['City'].str.lower() == city_name.lower()]
     if filtered_news.empty:
-        print(f"No news found for city: {city_name}")
+        st.write(f"{city_name} ke liye koi news nahi mili.")
     else:
         for index, row in filtered_news.iterrows():
-            print(f"News ID: {row['News Id']}")
-            print(f"Heading: {row['Heading']}")
-            print(f"Date Of Publish: {row['Date Of Publish']}")
-            print(f"URL: {row['URL']}")
-            print(f"Author: {row['Author']}")
-            print(f"Editor: {row['Editor']}")
-            print(f"Reviewer: {row['Reviewer']}")
-            print(f"Category: {row['Category']}")
-            print(f"Tags: {row['Tags']}")
-            print(f"GA Views: {row['GA Views']}")
-            print(f"Image: {row['Image']}")
-            print(f"Display Story As Fast Check: {row['Display Story As Fast Check']}")
-            print(f"Select Review: {row['Select Review']}")
-            print(f"Text Caption: {row['Text Caption']}")
-            print(f"Caption: {row['Caption']}")
-            print(f"Language: {row['language']}")
-            print(f"Article Type: {row['Article Type']}")
-            print(f"Claim Review: {row['Claim Review']}")
-            print(f"Claimed By: {row['Claimed By']}")
-            print(f"Claim Source: {row['Claim Source']}")
-            print(f"City: {row['City']}")
-            print('-'*50)
+            st.write(f"**News ID:** {row['News Id']}")
+            st.write(f"**Heading:** {row['Heading']}")
+            st.write(f"**Date Of Publish:** {row['Date Of Publish']}")
+            st.write(f"**URL:** [Link]({row['URL']})")
+            st.write(f"**Author:** {row['Author']}")
+            st.write(f"**Editor:** {row['Editor']}")
+            st.write(f"**Reviewer:** {row['Reviewer']}")
+            st.write(f"**Category:** {row['Category']}")
+            st.write(f"**Tags:** {row['Tags']}")
+            st.write(f"**GA Views:** {row['GA Views']}")
+            st.write(f"**Image:** ![Image]({row['Image']})")
+            st.write(f"**Display Story As Fast Check:** {row['Display Story As Fast Check']}")
+            st.write(f"**Select Review:** {row['Select Review']}")
+            st.write(f"**Text Caption:** {row['Text Caption']}")
+            st.write(f"**Caption:** {row['Caption']}")
+            st.write(f"**Language:** {row['language']}")
+            st.write(f"**Article Type:** {row['Article Type']}")
+            st.write(f"**Claim Review:** {row['Claim Review']}")
+            st.write(f"**Claimed By:** {row['Claimed By']}")
+            st.write(f"**Claim Source:** {row['Claim Source']}")
+            st.write(f"**City:** {row['City']}")
+            st.write('-' * 50)
 
-# Example usage
-city_name = input("Enter the city name to filter news: ")
-filter_news_by_city(news_df, city_name)
+# Streamlit app mein news_page function ko call karna
+def news_page():
+    st.title("News by City")
+
+    # User se city name input lena
+    city_name = st.text_input("City ka naam daalein:")
+
+    # Agar city di gayi hai, toh news ko filter aur display karna
+    if city_name:
+        filter_news_by_city(news_df, city_name)
+
+# Function ko Streamlit app mein call karna
+news_page()
