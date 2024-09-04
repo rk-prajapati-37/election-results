@@ -1,5 +1,7 @@
+# templates/home.py
 import streamlit as st
 
-def show_about():
-    st.title("About")
-    st.write("This is the About page.")
+
+def home_page():
+    st.title("Home Page")
+    st.write("Welcome to the Home Page!")
