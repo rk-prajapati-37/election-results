@@ -34,7 +34,7 @@ geojson_data = requests.get(geojson_url).json()
 
 # Function to filter news by city
 def filter_news_by_city(news, city_name):
-    filtered_news = news[news['City'].str.lower() == city_name.lower()]  # Ensure case-insensitive matching
+    filtered_news = news[news['City'].str.lower() == city_name.lower()]  # Case-insensitive match
     if filtered_news.empty:
         st.write(f"{city_name} ke liye koi news nahi mili.")
     else:
@@ -50,15 +50,6 @@ def filter_news_by_city(news, city_name):
             st.write(f"**Tags:** {row['Tags']}")
             st.write(f"**GA Views:** {row['GA Views']}")
             st.write(f"**Image:** ![Image]({row['Image']})")
-            st.write(f"**Display Story As Fast Check:** {row['Display Story As Fast Check']}")
-            st.write(f"**Select Review:** {row['Select Review']}")
-            st.write(f"**Text Caption:** {row['Text Caption']}")
-            st.write(f"**Caption:** {row['Caption']}")
-            st.write(f"**Language:** {row['language']}")
-            st.write(f"**Article Type:** {row['Article Type']}")
-            st.write(f"**Claim Review:** {row['Claim Review']}")
-            st.write(f"**Claimed By:** {row['Claimed By']}")
-            st.write(f"**Claim Source:** {row['Claim Source']}")
             st.write(f"**City:** {row['City']}")
             st.write('-' * 50)
 
@@ -84,6 +75,7 @@ def create_map_with_hover(city_locations, geojson_data):
         tooltip=folium.GeoJsonTooltip(fields=['NAME_1'], aliases=['State: '])
     ).add_to(m)
 
+    # Add city markers
     for city, coords in city_locations.items():
         marker = folium.Marker(
             location=coords,
@@ -98,15 +90,15 @@ def create_map_with_hover(city_locations, geojson_data):
 def news_page():
     st.title("City News with State Borders")
 
-    # Create two columns layout: left for the map, right for the news details
-    col1, col2 = st.columns([2, 1])  # Left is bigger for the map, right is smaller for news details
+    # Create two columns layout: left for the map (33%), right for the news details (66%)
+    col1, col2 = st.columns([2, 1])  # 33% width for the map and 66% for the news details
 
     with col1:
         st.subheader("City ka naam daalein ya map se choose karein:")
 
         # Display the map with hover effect
         m = create_map_with_hover(city_locations, geojson_data)
-        map_output = st_folium(m, width=700, height=500)
+        map_output = st_folium(m, width=500, height=500)  # Adjust map size
 
         # Extract clicked city name if available
         city_name = ""
@@ -120,5 +112,6 @@ def news_page():
         else:
             st.write("Map par kisi city ko click karein ya search karein.")
 
+# Run the app
 if __name__ == '__main__':
     news_page()
