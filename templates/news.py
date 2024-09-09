@@ -1,5 +1,5 @@
-import pandas as pd
 import streamlit as st
+import pandas as pd
 import folium
 from streamlit_folium import st_folium
 import requests
@@ -33,25 +33,62 @@ geojson_url = 'https://raw.githubusercontent.com/geohacker/india/master/state/in
 geojson_data = requests.get(geojson_url).json()
 
 # Function to filter news by city
+
+
 def filter_news_by_city(news, city_name):
     filtered_news = news[news['City'].str.lower() == city_name.lower()]  # Case-insensitive match
+    
     if filtered_news.empty:
         st.write(f"{city_name} ke liye koi news nahi mili.")
     else:
         for index, row in filtered_news.iterrows():
-            st.write(f"**News ID:** {row['News Id']}")
-            st.write(f"**Heading:** {row['Heading']}")
-            st.write(f"**Date Of Publish:** {row['Date Of Publish']}")
-            st.write(f"**URL:** [Link]({row['URL']})")
-            st.write(f"**Author:** {row['Author']}")
-            st.write(f"**Editor:** {row['Editor']}")
-            st.write(f"**Reviewer:** {row['Reviewer']}")
-            st.write(f"**Category:** {row['Category']}")
-            st.write(f"**Tags:** {row['Tags']}")
-            st.write(f"**GA Views:** {row['GA Views']}")
-            st.write(f"**Image:** ![Image]({row['Image']})")
-            st.write(f"**City:** {row['City']}")
-            st.write('-' * 50)
+            # Split tags by commas (or other delimiters) and limit to first 5 tags
+            tags = row['Tags'].split(',')  # Assuming tags are comma-separated
+            tags = tags[:5]  # Limit to first 5 tags
+            tags_display = ', '.join(tags)  # Join tags into a string
+            
+            # Display each news item in a card layout
+            st.markdown(
+                f"""
+                <div class="art-card-box">
+                    <!-- Full-Width Heading Section -->
+                    <div style="width: 100%; margin-bottom: 10px;">
+                        <a href="{row['URL']}" target="_blank" class="heading-link">
+                            <h3 class="main-heading-txt">{row['Heading']}</h3>
+                        </a>
+                    </div>
+                    <!-- Flex Layout for Image and Details -->
+                    <div style="display: flex;">
+                        <!-- Left Image Section -->
+                        <div class="future-img" style="flex: 1; margin-right: 10px;">
+                            <a href="{row['URL']}" target="_blank" class="image-link">
+                                <img src="{row['Image']}" alt="News Image" style="width: 100%; height: auto; border-radius: 8px;">
+                            </a>
+                        </div>
+                        <!-- Right Text Section -->
+                        <div style="flex: 2;">
+                            <!-- Article Description 
+                            <p style="margin: 0 0 10px 0; color: #555;">{row['Text Caption']}</p> -->
+                            <!-- Author and Date Information -->
+                            <p style="margin: 0 0 5px 0; color: #777;">By <strong>{row['Author']}</strong> | {row['Date Of Publish']}</p>
+                            <!-- Tags -->
+                            <p style="margin: 10px 0; color: #555;">{tags_display}</p>
+                            <a class="more-btn" href="{row['URL']}" target="_blank" style="color: white; background-color: #007BFF; padding: 8px 12px; text-decoration: none; border-radius: 5px;">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+
+
+
+
+
+
+
+
 
 # Function to create map with hover effect and state borders using GeoJSON
 def create_map_with_hover(city_locations, geojson_data):
@@ -79,7 +116,7 @@ def create_map_with_hover(city_locations, geojson_data):
     for city, coords in city_locations.items():
         marker = folium.Marker(
             location=coords,
-            popup=city,
+            popup=city,  # City name will show in the popup
             tooltip=f"Click for news from {city}",
             icon=folium.Icon(color='blue')
         ).add_to(m)
@@ -108,6 +145,7 @@ def news_page():
     with col2:
         st.subheader("Selected City News:")
         if city_name:
+            st.write(f"**Selected City: {city_name}**")  # Show selected city
             filter_news_by_city(news_df, city_name)  # Filter and display news for the selected city
         else:
             st.write("Map par kisi city ko click karein ya search karein.")
