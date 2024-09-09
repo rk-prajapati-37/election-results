@@ -36,7 +36,7 @@ geojson_data = requests.get(geojson_url).json()
 
 
 def filter_news_by_city(news, city_name):
-    filtered_news = news[news['City'].str.lower() == city_name.lower()]  # Case-insensitive match
+    filtered_news = news[news['City'].str.lower() == city_name.lower()]  # Case-insensitive match r
     
     if filtered_news.empty:
         st.write(f"{city_name} ke liye koi news nahi mili.")
