@@ -4,19 +4,20 @@ import folium
 from streamlit_folium import st_folium
 import requests
 
-# NewsAPI endpoint and API key
-api_key = '81f6e15f6aac4f3dba784e67a50e8265'  # Replace with your NewsAPI key
-news_url = 'https://newsapi.org/v2/everything?domains=wsj.com&apiKey=' + api_key
+# Google Sheets CSV URL
+url = 'https://docs.google.com/spreadsheets/d/18Z0HOYlHqjOAHOV55JaUiHiidDvNPqkbMlqDuFBEGWQ/export?format=csv&gid=1785908724'
 
-# Fetch news data from NewsAPI
-def fetch_news_data():
-    response = requests.get(news_url)
-    news_data = response.json()
-    if news_data['status'] == 'ok':
-        return news_data['articles']
-    else:
-        st.error("Failed to fetch news data.")
-        return []
+# Manually specifying column names
+columns = [
+    "Sr No", "News Id", "City", "Heading", "Date Of Publish", "URL",
+    "Author", "Editor", "Reviewer", "Category", "Tags", "GA Views",
+    "Image", "Display Story As Fast Check", "Select Review", "Text Caption",
+    "Caption", "language", "Article Type", "Claim Review", "Claimed By",
+    "Claim Source"
+]
+
+# Load CSV file, skip first 3 rows, and specify column names
+news_df = pd.read_csv(url, skiprows=3, names=columns, header=None)
 
 # City location data (Latitude and Longitude)
 city_locations = {
@@ -31,44 +32,51 @@ city_locations = {
 geojson_url = 'https://raw.githubusercontent.com/geohacker/india/master/state/india_telengana.geojson'
 geojson_data = requests.get(geojson_url).json()
 
-# Function to filter news by city (assumes city is mentioned in the article description)
-# Function to filter news by city (assumes city is mentioned in the article description)
-def filter_news_by_city(news, city_name):
-    filtered_news = [article for article in news if article.get('description') and city_name.lower() in article['description'].lower()]
+# Function to filter news by city
 
-    if not filtered_news:
+
+def filter_news_by_city(news, city_name):
+    filtered_news = news[news['City'].str.lower() == city_name.lower()]  # Case-insensitive match
+    
+    if filtered_news.empty:
         st.write(f"{city_name} ke liye koi news nahi mili.")
     else:
-        for article in filtered_news:
+        for index, row in filtered_news.iterrows():
             # Display each news item in a card layout
             st.markdown(
                 f"""
                 <div class="art-card-box">
                     <!-- Full-Width Heading Section -->
                     <div style="width: 100%; margin-bottom: 10px;">
-                        <a href="{article['url']}" target="_blank" class="heading-link">
-                            <h3 class="main-heading-txt">{article['title']}</h3>
+                        <a href="{row['URL']}" target="_blank" class="heading-link">
+                            <h3 class="main-heading-txt">{row['Heading']}</h3>
                         </a>
                     </div>
                     <!-- Flex Layout for Image and Details -->
                     <div style="display: flex;">
                         <!-- Left Image Section -->
                         <div class="future-img" style="flex: 1; margin-right: 10px;">
-                            <a href="{article['url']}" target="_blank" class="image-link">
-                                <img src="{article['urlToImage']}" alt="News Image" style="width: 100%; height: auto; border-radius: 8px;">
+                            <a href="{row['URL']}" target="_blank" class="image-link">
+                                <img src="{row['Image']}" alt="News Image" style="width: 100%; height: auto; border-radius: 8px;">
                             </a>
                         </div>
                         <!-- Right Text Section -->
                         <div style="flex: 2;">
-                            <p style="margin: 0 0 10px 0; color: #555;">{article['description']}</p>
-                            <p style="margin: 0 0 5px 0; color: #777;">By <strong>{article['author']}</strong> | {article['publishedAt']}</p>
-                            <a class="more-btn" href="{article['url']}" target="_blank" style="color: white; background-color: #007BFF; padding: 8px 12px; text-decoration: none; border-radius: 5px;">Read More</a>
+                            <!-- Author and Date Information -->
+                            <p style="margin: 0 0 5px 0; color: #777;">By <strong>{row['Author']}</strong> | {row['Date Of Publish']}</p>
+                            <!-- Category and City Information with Links -->
+                            <p style="margin: 10px 0; color: #555;">
+                                <a  class="heading-link Category-box" >{row['Category']}</a> | 
+                                <a  class="heading-link" >City: <strong style="color: #007BFF;">{city_name}</strong></a>
+                            </p>
+                            <a class="more-btn" href="{row['URL']}" target="_blank">Read More</a>
                         </div>
                     </div>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
+
 
 
 # Function to create map with hover effect and state borders using GeoJSON
@@ -106,7 +114,7 @@ def create_map_with_hover(city_locations, geojson_data):
 
 # Function to render the news page in Streamlit app
 def news_page():
-    st.title("City News with WSJ Articles")
+    st.title("City News with State Borders")
 
     # Create two columns layout: left for the map (33%), right for the news details (66%)
     col1, col2 = st.columns([2, 1])  # 33% width for the map and 66% for the news details
@@ -125,11 +133,9 @@ def news_page():
 
     with col2:
         st.subheader("Selected City News:")
-        news_articles = fetch_news_data()  # Fetch news articles from NewsAPI
-
         if city_name:
             st.write(f"**Selected City: {city_name}**")  # Show selected city
-            filter_news_by_city(news_articles, city_name)  # Filter and display news for the selected city
+            filter_news_by_city(news_df, city_name)  # Filter and display news for the selected city
         else:
             st.write("Map par kisi city ko click karein ya search karein.")
 
