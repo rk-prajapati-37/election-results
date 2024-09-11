@@ -1,3 +1,5 @@
+# news_by_city.py
+
 import streamlit as st
 import pandas as pd
 import folium
@@ -33,8 +35,6 @@ geojson_url = 'https://raw.githubusercontent.com/geohacker/india/master/state/in
 geojson_data = requests.get(geojson_url).json()
 
 # Function to filter news by city
-
-
 def filter_news_by_city(news, city_name):
     filtered_news = news[news['City'].str.lower() == city_name.lower()]  # Case-insensitive match
     
@@ -66,18 +66,16 @@ def filter_news_by_city(news, city_name):
                             <p style="margin: 0 0 5px 0; color: #777;">By <strong>{row['Author']}</strong> | {row['Date Of Publish']}</p>
                             <!-- Category and City Information with Links -->
                             <p style="margin: 10px 0; color: #555;">
-                                <a  class="heading-link Category-box" >{row['Category']}</a> | 
-                                <a  class="heading-link" >City: <strong style="color: #007BFF;">{city_name}</strong></a>
+                                <a href="?category={row['Category']}" class="heading-link" style="color: #007BFF;">Category: <strong>{row['Category']}</strong></a> | 
+                                <a href="?city={row['City']}" class="heading-link" style="color: #007BFF;">City: <strong>{row['City']}</strong></a>
                             </p>
-                            <a class="more-btn" href="{row['URL']}" target="_blank">Read More</a>
+                            <a class="more-btn" href="{row['URL']}" target="_blank" style="color: white; background-color: #007BFF; padding: 8px 12px; text-decoration: none; border-radius: 5px;">Read More</a>
                         </div>
                     </div>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
-
-
 
 # Function to create map with hover effect and state borders using GeoJSON
 def create_map_with_hover(city_locations, geojson_data):
@@ -116,6 +114,10 @@ def create_map_with_hover(city_locations, geojson_data):
 def news_page():
     st.title("City News with State Borders")
 
+    # Extract query parameters
+    query_params = st.experimental_get_query_params()
+    selected_city = query_params.get('city', [None])[0]
+
     # Create two columns layout: left for the map (33%), right for the news details (66%)
     col1, col2 = st.columns([2, 1])  # 33% width for the map and 66% for the news details
 
@@ -127,15 +129,14 @@ def news_page():
         map_output = st_folium(m, width=500, height=500)  # Adjust map size
 
         # Extract clicked city name if available
-        city_name = ""
         if map_output and 'last_object_clicked_popup' in map_output:
-            city_name = map_output['last_object_clicked_popup']  # Extract clicked city name
+            selected_city = map_output['last_object_clicked_popup']  # Extract clicked city name
 
     with col2:
         st.subheader("Selected City News:")
-        if city_name:
-            st.write(f"**Selected City: {city_name}**")  # Show selected city
-            filter_news_by_city(news_df, city_name)  # Filter and display news for the selected city
+        if selected_city:
+            st.write(f"**Selected City: {selected_city}**")  # Show selected city
+            filter_news_by_city(news_df, selected_city)  # Filter and display news for the selected city
         else:
             st.write("Map par kisi city ko click karein ya search karein.")
 

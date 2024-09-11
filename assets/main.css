@@ -8,14 +8,17 @@
 }
 
 /* Adjust button styling */
-div.stButton > button {
-  background-color: #0066cc;
+/* div.stButton > button {
+  background-color: #e85350;
   color: white;
   border-radius: 8px;
 }
 
 div.stButton > button:hover {
-  background-color: #004c99;
+  background-color: #203361;
+} */
+a.heading-link {
+  color: #000;
 }
 
 /* Adjust the sidebar width */
@@ -27,14 +30,21 @@ div.stButton > button:hover {
   padding-right: 2rem;
 }
 .st-emotion-cache-115gedg {
-  width: calc(40.6667% - 1rem);
-  flex: 1 1 calc(40.6667% - 1rem);
+  width: calc(25.555% - 1rem);
+  flex: 1 1 calc(25.555% - 1rem);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  max-height: 500px;
+  overflow: hidden;
 }
 
 .st-emotion-cache-1r6slb0 {
-  width: calc(45.3333% - 1rem);
-  flex: 1 1 calc(45.3333% - 1rem);
+  width: calc(33.6667% - 1rem);
+  flex: 1 1 calc(33.6667% - 1rem);
 }
+
+
 
 
 .art-card-box{
@@ -68,7 +78,7 @@ div.stButton > button:hover {
 
 
 .more-btn {
-  color: white; 
+  color: white !important; 
   background-color: #203361; 
   padding: 8px 12px; 
   text-decoration: none; 
@@ -76,11 +86,18 @@ div.stButton > button:hover {
 }
 
 .more-btn:hover {
-  background-color: #e85350; 
+  background-color: #e85350;
+  text-decoration: none;  
 }
 
 .future-img img {
   width: 100%; 
   height: auto; 
   border-radius: 8px;
+}
+a.heading-link.Category-box {
+  background-color: #fcf5e6;
+  color: #e09f0f;
+  padding: 2px 10px;
+  border-radius: 5px;
 }
