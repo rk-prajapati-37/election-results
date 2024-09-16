@@ -87,9 +87,6 @@ def filter_news_by_city(news, city_name):
 
 
 
-
-
-
 # Function to create map with hover effect and state borders using GeoJSON
 def create_map_with_hover(city_locations, geojson_data):
     m = folium.Map(location=[20.5937, 78.9629], zoom_start=5)
