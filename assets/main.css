@@ -36,7 +36,6 @@ div.stButton > button:hover {
   flex: 1 1 calc(45.3333% - 1rem);
 }
 
-
 .art-card-box{
   border: 1px solid rgb(221, 221, 221);
   border-radius: 8px;
@@ -65,7 +64,6 @@ div.stButton > button:hover {
 .heading-link:hover, .image-link:hover {
   text-decoration: none; /* Underline on hover for better UX */
 }
-
 
 .more-btn {
   color: white; 
