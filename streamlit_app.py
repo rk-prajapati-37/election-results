@@ -1,9 +1,8 @@
 import streamlit as st
 import os
-from pathlib import Path
 from templates.home import home_page
 from templates.pandas_page import pandas_page
-from templates.news import news_page
+from templates.news_api import news_api_page  # Importing the news API page
 
 # Page layout settings
 st.set_page_config(page_title="Home Page", layout="wide")
@@ -26,10 +25,10 @@ menu = st.sidebar.radio("Select a Page", ["Home", "State Results", "News"])
 
 # Container to manage the layout
 with st.container():
-    # Render the selected page
+    # Render the selected page based on the user's choice
     if menu == "Home":
-        home_page()
+        home_page()  # Render the home page
     elif menu == "State Results":
-        pandas_page()
+        pandas_page()  # Render the page for state results (using Pandas)
     elif menu == "News":
-        news_page()
+        news_api_page()  # Render the page for the news using your API
