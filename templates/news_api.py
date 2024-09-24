@@ -1,10 +1,17 @@
 import streamlit as st
+
+# Ensure this is the very first Streamlit command
+st.set_page_config(page_title="Home Page", layout="wide")
+
 import pandas as pd
-import folium
-from streamlit_folium import st_folium
 import requests
+from streamlit_folium import st_folium
+import folium
 from functools import lru_cache
 from threading import Thread
+
+# The rest of your code goes here...
+
 
 # Google Sheets API URL
 api_url = 'https://script.google.com/macros/s/AKfycbwBC4nQXIlrDUoSYI1lbZ6qWPdRyGDkjy0FAPsNl9wGn_msOwVV1M2z4abJr__0F7ee1w/exec'
