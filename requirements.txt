@@ -1,4 +1,7 @@
 streamlit
 pandas
+<<<<<<< HEAD
 folium
+=======
+>>>>>>> 6852115b7f749b060cc391c01d60ff7852e4342a
 plotly
