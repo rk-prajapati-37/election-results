@@ -1,11 +1,14 @@
 import streamlit as st
-import os
+import os  # Add this line
+st.set_page_config(page_title="Home Page", layout="wide")
+
+# Baaki imports yahaan likhen
+import pandas as pd
+import folium
+from streamlit_folium import folium_static
 from templates.home import home_page
 from templates.pandas_page import pandas_page
-from templates.news_api import news_api_page  # Importing the news API page
-
-# Page layout settings
-st.set_page_config(page_title="Home Page", layout="wide")
+from templates.news_api import news_api_page
 
 # Function to load custom CSS
 def load_css():
