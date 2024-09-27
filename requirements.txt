@@ -1,6 +1,5 @@
 streamlit
 pandas
-plotly.express
 plotly
 altair==5.4.0
 attrs==24.2.0
