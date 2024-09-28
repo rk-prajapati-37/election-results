@@ -3,5 +3,6 @@ pandas
 folium
 streamlit-folium
 plotly
+folium>=0.12
 
 
