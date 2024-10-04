@@ -1,6 +1,6 @@
 streamlit
 pandas
-folium==0.12.1
+folium==0.17.0
 streamlit-folium
 plotly
 

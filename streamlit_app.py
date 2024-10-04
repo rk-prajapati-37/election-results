@@ -1,14 +1,14 @@
 import streamlit as st
-import os  # Add this line
-st.set_page_config(page_title="Home Page", layout="wide")
-
-# Baaki imports yahaan likhen
+import os  # Required for file path handling
 import pandas as pd
 import folium
 from streamlit_folium import folium_static
 from templates.home import home_page
 from templates.pandas_page import pandas_page
 from templates.news_api import news_api_page
+
+# Set up page configuration
+st.set_page_config(page_title="Home Page", layout="wide")
 
 # Function to load custom CSS
 def load_css():
@@ -18,7 +18,7 @@ def load_css():
             css = f.read()
             st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
     else:
-        st.error("CSS file not found.")
+        st.error(f"CSS file not found at path: {os.path.abspath(css_path)}")
 
 # Load custom CSS
 load_css()
